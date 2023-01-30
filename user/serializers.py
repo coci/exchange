@@ -37,3 +37,9 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
 		fields = ["id", "first_name", "last_name", "username", "password", "password2"]
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = User
+		fields = ["first_name", "last_name"]
