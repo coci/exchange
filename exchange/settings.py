@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 	'rest_framework',
 
 	'user.apps.UserConfig',
+	'permission.apps.PermissionConfig',
 ]
 
 REST_FRAMEWORK = {
