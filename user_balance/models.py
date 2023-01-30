@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 
 class UserBalance(models.Model):
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	balance = models.IntegerField(default=0)
 
 	@receiver(post_save, sender=User)
