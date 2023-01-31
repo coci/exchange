@@ -1,0 +1,36 @@
+version: "3.4"
+
+services:
+  exchange:
+    build: .
+    container_name: exchange
+    command: gunicorn exchange.wsgi:application --bind 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    environment:
+      - COIN_PRICE=4
+      - ORDER_LIMIT=10
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - DATABASE_NAME=exchange
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=qazxswedcvfrtrt!
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+    depends_on:
+      - postgres
+      - redis
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=exchange
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qazxswedcvfrtrt!
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
