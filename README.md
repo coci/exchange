@@ -3,6 +3,8 @@
 
 2- i implemented this project based on user model which every order belongs to user
 
+3- if you mind to call endpoints and test functionality please just consider go through steps below and for api documentation i choose POSTMAN collection because of lack of time to accomplish all aspects of task ( i could use Swagger or OpenAPi for documentation )
+
 ### to deploy:
 ```shell
 docker-compose up -d
