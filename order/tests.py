@@ -29,6 +29,9 @@ class MakingOrderTestCases(TestCase):
 
 		self.assertEqual(order.status_code, 201)
 
+		redis_connection = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+		redis_connection.delete('ABAN')
+
 	def test_successful_order_with_success_status(self):
 		self.clients.put('/api/v1/user_balance/', {'user': self.user['id'], 'balance': 100})
 
@@ -37,6 +40,9 @@ class MakingOrderTestCases(TestCase):
 		self.assertEqual(order.status_code, 201)
 		self.assertEqual(order.json()['status'], 'success')
 
+		redis_connection = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+		redis_connection.delete('ABAN')
+
 	def test_successful_order_with_pending_status(self):
 		self.clients.put('/api/v1/user_balance/', {'user': self.user['id'], 'balance': 100})
 
@@ -44,6 +50,9 @@ class MakingOrderTestCases(TestCase):
 
 		self.assertEqual(order.status_code, 201)
 		self.assertEqual(order.json()['status'], 'pending')
+
+		redis_connection = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+		redis_connection.delete('ABAN')
 
 	def test_pending_order(self):
 		self.clients.put('/api/v1/user_balance/', {'user': self.user['id'], 'balance': 100})
@@ -62,3 +71,35 @@ class MakingOrderTestCases(TestCase):
 
 		redis_connection = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
 		redis_connection.delete('ABAN1')
+
+	def test_pending_order_with_different_pair(self):
+		self.clients.put('/api/v1/user_balance/', {'user': self.user['id'], 'balance': 100})
+
+		order1 = self.clients.post('/api/v1/order/', {'coin': 'ABAN1', 'amount': 2}).json()
+		order2 = self.clients.post('/api/v1/order/', {'coin': 'AZAR', 'amount': 2}).json()
+
+		order1_obj = Order.objects.get(pk=order1['id'])
+		order2_obj = Order.objects.get(pk=order2['id'])
+
+		self.assertEqual(order1_obj.status, 'pending')
+		self.assertEqual(order2_obj.status, 'pending')
+
+		redis_connection = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+		redis_connection.delete('ABAN1')
+		redis_connection.delete('AZAR')
+
+	def test_pending_and_success_order_with_different_pair(self):
+		self.clients.put('/api/v1/user_balance/', {'user': self.user['id'], 'balance': 100})
+
+		order1 = self.clients.post('/api/v1/order/', {'coin': 'ABAN1', 'amount': 2}).json()
+		order2 = self.clients.post('/api/v1/order/', {'coin': 'AZAR', 'amount': 3}).json()
+
+		order1_obj = Order.objects.get(pk=order1['id'])
+		order2_obj = Order.objects.get(pk=order2['id'])
+
+		self.assertEqual(order1_obj.status, 'pending')
+		self.assertEqual(order2_obj.status, 'success')
+
+		redis_connection = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+		redis_connection.delete('ABAN1')
+		redis_connection.delete('AZAR')
