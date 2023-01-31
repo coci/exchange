@@ -4,7 +4,8 @@ from rest_framework.test import APIClient
 
 
 class UserRegisterTestCases(TestCase):
-	client = APIClient()
+	def setUp(self) -> None:
+		self.client = APIClient()
 
 	def test_create_user_successfully(self):
 		request = self.client.post('/api/v1/user/',
