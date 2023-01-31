@@ -18,7 +18,11 @@ def buy_from_exchange(coin, amount):
 def send_pending_order(orders_id, coin):
 	redis_connection = redis.Redis(host=REDIS_HOST, db=REDIS_DB)
 	orders = Order.objects.filter(pk__in=orders_id)
+
+	buy_from_exchange(coin, orders.aggregate((Sum('coin_amount'))))
+
 	orders.update(status=OrderStatus.success)
+
 	redis_connection.delete(coin)
 
 
