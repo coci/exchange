@@ -20,4 +20,4 @@ class OrderInputSerializer(serializers.Serializer):
 class OrderSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Order
-		filter = "__all__"
+		fields = "__all__"
