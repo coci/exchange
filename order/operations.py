@@ -11,7 +11,7 @@ from order.models import Order, OrderStatus
 
 
 def buy_from_exchange(coin, amount):
-	print(coin, amount)
+	pass
 
 
 @transaction.atomic
