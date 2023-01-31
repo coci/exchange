@@ -15,15 +15,20 @@ def buy_from_exchange(coin, amount):
 
 
 @transaction.atomic
+def send_pending_order(orders_id, coin):
+	redis_connection = redis.Redis(host=REDIS_HOST, db=REDIS_DB)
+	orders = Order.objects.filter(pk__in=orders_id)
+	orders.update(status=OrderStatus.success)
+	redis_connection.delete(coin)
+
+
+@transaction.atomic
 def check_pending_order(coin):
 	redis_connection = redis.Redis(host=REDIS_HOST, db=REDIS_DB)
 	pending_order, total_sum = loads(redis_connection.get(coin))
 
 	if total_sum >= 10:
-		orders = Order.objects.filter(pk__in=pending_order.keys())
-		buy_from_exchange(coin, orders.aggregate((Sum('coin_amount')))['coin_amount__sum'])
-		orders.update(status=OrderStatus.success)
-		redis_connection.delete(coin)
+		send_pending_order(orders_id=pending_order.keys(), coin=coin)
 
 
 def set_pending_order(order_id, coin, amount):
