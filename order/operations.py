@@ -30,7 +30,7 @@ def set_pending_order(order_id, coin, amount):
 	redis_connection = redis.Redis(host=REDIS_HOST, db=REDIS_DB)
 	total_price = amount * COIN_PRICE
 
-	if redis_connection.hgetall(coin):
+	if redis_connection.get(coin):
 		pending_order, total_sum = loads(redis_connection.get(coin))
 
 		pending_order[order_id] = total_price
