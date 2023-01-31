@@ -89,8 +89,8 @@ WSGI_APPLICATION = 'exchange.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'NAME': 'exchange',
-		'USER': 'postgres',
+		'NAME': os.getenv('DATABASE_NAME', 'exchange'),
+		'USER': os.getenv('DATABASE_USER', 'postgres'),
 		'PASSWORD': os.getenv('DATABASE_PASSWORD', '123456'),
 		'HOST': os.getenv('DATABASE_HOST', 'localhost'),
 		'PORT': os.getenv('DATABASE_PORT', 5432),
