@@ -36,7 +36,7 @@ def set_pending_order(order_id, coin, amount):
 		pending_order[order_id] = total_price
 		total_sum += total_price
 
-		data = dumps([{str(order_id): total_price}, total_price])
+		data = dumps([pending_order, total_sum])
 		redis_connection.set(coin, data)
 
 		check_pending_order(coin=coin)
