@@ -3,8 +3,8 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 
 
-class SavedModelsTestCase(TestCase):
-	clients = APIClient()
+class UserRegisterTestCases(TestCase):
+	client = APIClient()
 
 	def test_create_user_successfully(self):
 		request = self.client.post('/api/v1/user/',
