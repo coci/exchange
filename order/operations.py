@@ -21,7 +21,7 @@ def check_pending_order(coin):
 
 	if total_sum >= 10:
 		orders = Order.objects.filter(pk__in=pending_order.keys())
-		buy_from_exchange(coin, orders.aggregate((Sum('coin_amount')['coin_amount__sum'])))
+		buy_from_exchange(coin, orders.aggregate((Sum('coin_amount')))['coin_amount__sum'])
 		orders.update(status=OrderStatus.success)
 		redis_connection.delete(coin)
 
