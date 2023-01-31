@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 	'permission.apps.PermissionConfig',
 	'user_balance.apps.UserBalanceConfig',
 	'common.apps.CommonConfig',
+	'order.apps.OrderConfig',
 ]
 
 REST_FRAMEWORK = {
