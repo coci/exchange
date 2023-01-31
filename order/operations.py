@@ -36,6 +36,17 @@ def check_pending_order(coin):
 
 
 def set_pending_order(order_id, coin, amount):
+	"""
+		cache/store pending order in redis
+		format of redis will be something like this :
+
+		"ABAN" : [{'1':5,'2':5},10]
+
+		as key i stored pair and for value i stored array which first of element are the hash map of-
+		orders id with proper value ( coin amount * coin price ) and the second element are the sum of-
+		all pending order in this pair.
+
+	"""
 	redis_connection = redis.Redis(host=REDIS_HOST, db=REDIS_DB)
 	total_price = amount * COIN_PRICE
 
