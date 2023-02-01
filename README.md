@@ -20,3 +20,18 @@ i add postman collection for api documentation :
 
 
 <a id="raw-url" href="https://raw.githubusercontent.com/coci/exchange/master/exchange_postman.json" download="https://raw.githubusercontent.com/coci/exchange/master/exchange_postman.json">Download POSTMAN collection</a>
+
+### to test project:
+1- first call register user
+
+2- get user token
+
+3- add balance to user
+
+4- make order
+
+
+### run test cases:
+```shell
+docker-compose exec exchange python3 manage.py test
+```
