@@ -20,6 +20,7 @@ class Payment(APIView):
 
 		if serializer.is_valid():
 			coin = serializer.validated_data['coin']
+			# i assume coin amount is Integer but i know in real production this will be Decimal
 			amount = serializer.validated_data['amount']
 
 		else:
@@ -29,7 +30,7 @@ class Payment(APIView):
 
 		total_price = amount * COIN_PRICE
 
-		if not user_balance.balance >= total_price:
+		if user_balance.balance <= total_price:
 			response = {
 				"status": "error",
 				"message": "you don't have credit."
@@ -41,6 +42,10 @@ class Payment(APIView):
 		user_balance.save()
 
 		if total_price >= ORDER_LIMIT:
+
+			# i assume call buy_from_exchange always is success,
+			# so i didn't check if buying from exchange is success to update order in db
+
 			buy_from_exchange(coin=coin, amount=amount)
 
 			order = Order.objects.create(
