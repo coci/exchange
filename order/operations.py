@@ -6,7 +6,7 @@ from pickle import loads, dumps
 from django.db import transaction
 from django.db.models import Sum
 
-from common.env import REDIS_DB, REDIS_HOST, COIN_PRICE
+from common.env import REDIS_DB, REDIS_HOST, COIN_PRICE, ORDER_LIMIT
 from order.models import Order, OrderStatus
 
 
@@ -16,9 +16,14 @@ def buy_from_exchange(coin, amount):
 
 @transaction.atomic
 def send_pending_order(orders_id, coin, orders_amount):
+	"""
+		send pending order to exchange
+	"""
 	redis_connection = redis.Redis(host=REDIS_HOST, db=REDIS_DB)
 	orders = Order.objects.filter(pk__in=orders_id)
 
+	# i assume call buy_from_exchange always is success,
+	# so i didn't check if buying from exchange is success to update order in db
 	buy_from_exchange(coin, orders_amount)
 
 	orders.update(status=OrderStatus.success)
@@ -28,10 +33,13 @@ def send_pending_order(orders_id, coin, orders_amount):
 
 @transaction.atomic
 def check_pending_order(coin):
+	"""
+		check pending order that cached in redis and check if sum of them is upper than exchange limit
+	"""
 	redis_connection = redis.Redis(host=REDIS_HOST, db=REDIS_DB)
 	pending_order, total_sum, orders_amount = loads(redis_connection.get(coin))
 
-	if total_sum >= 10:
+	if total_sum >= ORDER_LIMIT:
 		send_pending_order(orders_id=pending_order.keys(), coin=coin, orders_amount=orders_amount)
 
 
