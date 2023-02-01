@@ -1,9 +1,9 @@
 ### something to notice:
-1- i used JWT as a authentication methods, so please consider some endpoints have permission. for more information please see Postman collections
+1- I used JWT as an authentication method, so please note that some endpoints have permission. For more information, please refer to the Postman collections.
 
-2- i implemented this project based on user model which every order belongs to user
+2- I implemented this project based on the user model, where every order is associated with a user
 
-3- if you mind to call endpoints and test functionality please just consider go through steps below and for api documentation i choose POSTMAN collection because of lack of time to accomplish all aspects of task ( i could use Swagger or OpenAPi for documentation )
+3- If you would like to call the endpoints and test the functionality, please follow the steps below. For API documentation, I chose to use the POSTMAN collection due to a lack of time to fully complete the task. (I could have used Swagger or OpenAPI for documentation instead.
 
 ### to deploy:
 ```shell
