@@ -1,17 +1,17 @@
-from django.db import transaction
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from common.env import COIN_PRICE, ORDER_LIMIT
-from order.models import Order, OrderStatus
-from order.operations import buy_from_exchange, set_pending_order
+from .env import COIN_PRICE, ORDER_LIMIT
+from order.exchange import ExchangeHandler
+from order.models import OrderStatus
+from order.order import PendingOrderHandler, RedisHandler
+from order.payment import Payment
 from order.serializers import OrderInputSerializer, OrderSerializer
-from user_balance.models import UserBalance
 
 
-class Payment(APIView):
+class MakeOrderAPI(APIView):
 	permission_classes = [IsAuthenticated, ]
 
 	def post(self, request):
@@ -25,11 +25,9 @@ class Payment(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-		user_balance = UserBalance.objects.get(user=request.user)
+		payment = Payment(user=request.user, coin=coin, amount=amount, coin_price=COIN_PRICE, order_limit=ORDER_LIMIT)
 
-		total_price = amount * COIN_PRICE
-
-		if user_balance.balance <= total_price:
+		if not payment.is_user_have_balance():
 			response = {
 				"status": "error",
 				"message": "you don't have credit."
@@ -37,34 +35,22 @@ class Payment(APIView):
 			return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 		# minus user balance
-		user_balance.balance -= total_price
-		user_balance.save()
+		payment.decrease_user_balance()
 
-		if total_price >= ORDER_LIMIT:
-
+		if payment.is_total_price_allowed():
 			# i assume call buy_from_exchange always is success,
 			# so i didn't check if buying from exchange is success to update order in db
 
-			buy_from_exchange(coin=coin, amount=amount)
+			ExchangeHandler.buy_from_exchange(coin=coin, amount=amount)
 
-			order = Order.objects.create(
-				user=request.user,
-				coin=coin,
-				coin_amount=amount,
-				order_price=total_price,
-				status=OrderStatus.success
-			)
+			order = payment.create_database_record(status=OrderStatus.success)
 
 		else:
-			order = Order.objects.create(
-				user=request.user,
-				coin=coin,
-				coin_amount=amount,
-				order_price=total_price,
-				status=OrderStatus.pending
-			)
+			order = payment.create_database_record(status=OrderStatus.pending)
 
-			set_pending_order(order_id=order.pk, coin=coin, amount=amount)
+			pending_order = PendingOrderHandler(coin=coin, amount=amount, coin_price=COIN_PRICE, order_id=order.id,
+			                                    cache=RedisHandler)
+			pending_order.set_pending_order()
 
 		serializer = OrderSerializer(instance=order, many=False)
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
