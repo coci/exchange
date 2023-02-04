@@ -7,7 +7,7 @@ from .env import COIN_PRICE, ORDER_LIMIT
 from order.exchange import ExchangeHandler
 from order.models import OrderStatus
 from order.order import PendingOrderHandler, RedisHandler
-from order.payment import Payment
+from order.payment import PaymentHandler
 from order.serializers import OrderInputSerializer, OrderSerializer
 
 
@@ -25,7 +25,7 @@ class MakeOrderAPI(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-		payment = Payment(user=request.user, coin=coin, amount=amount, coin_price=COIN_PRICE, order_limit=ORDER_LIMIT)
+		payment = PaymentHandler(user=request.user, coin=coin, amount=amount, coin_price=COIN_PRICE, order_limit=ORDER_LIMIT)
 
 		if not payment.is_user_have_balance():
 			response = {

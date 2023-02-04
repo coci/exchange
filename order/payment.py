@@ -2,7 +2,7 @@ from order.models import Order
 from user_balance.models import UserBalance
 
 
-class Payment:
+class PaymentHandler:
 	def __init__(self, user, coin, amount, coin_price, order_limit):
 		self.user = user
 		self.coin = coin
