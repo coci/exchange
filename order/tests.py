@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from rest_framework.test import APIClient
 
-from common.env import REDIS_HOST, REDIS_PORT, REDIS_DB
+from .env import REDIS_HOST, REDIS_PORT, REDIS_DB
 from order.models import Order
 
 
