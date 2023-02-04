@@ -39,9 +39,7 @@ INSTALLED_APPS = [
 	'rest_framework',
 
 	'user.apps.UserConfig',
-	'permission.apps.PermissionConfig',
 	'user_balance.apps.UserBalanceConfig',
-	'common.apps.CommonConfig',
 	'order.apps.OrderConfig',
 ]
 
