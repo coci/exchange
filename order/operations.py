@@ -14,7 +14,6 @@ def buy_from_exchange(coin, amount):
 	pass
 
 
-@transaction.atomic
 def send_pending_order(orders_id, coin, orders_amount):
 	"""
 		send pending order to exchange
@@ -31,7 +30,6 @@ def send_pending_order(orders_id, coin, orders_amount):
 	redis_connection.delete(coin)
 
 
-@transaction.atomic
 def check_pending_order(coin):
 	"""
 		check pending order that cached in redis and check if sum of them is upper than exchange limit

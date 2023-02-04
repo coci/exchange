@@ -14,7 +14,6 @@ from user_balance.models import UserBalance
 class Payment(APIView):
 	permission_classes = [IsAuthenticated, ]
 
-	@transaction.atomic
 	def post(self, request):
 		serializer = OrderInputSerializer(data=request.data)
 
