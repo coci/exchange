@@ -3,12 +3,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .env import COIN_PRICE, ORDER_LIMIT
 from order.exchange import ExchangeHandler
 from order.models import OrderStatus
 from order.order import PendingOrderHandler, RedisHandler
 from order.payment import PaymentHandler
 from order.serializers import OrderInputSerializer, OrderSerializer
+from .env import COIN_PRICE, ORDER_LIMIT
 
 
 class MakeOrderAPI(APIView):
@@ -25,7 +25,8 @@ class MakeOrderAPI(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-		payment = PaymentHandler(user=request.user, coin=coin, amount=amount, coin_price=COIN_PRICE, order_limit=ORDER_LIMIT)
+		payment = PaymentHandler(user=request.user, coin=coin, amount=amount, coin_price=COIN_PRICE,
+		                         order_limit=ORDER_LIMIT)
 
 		if not payment.is_user_have_balance():
 			response = {

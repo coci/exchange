@@ -1,9 +1,10 @@
-import redis
 from pickle import loads, dumps
 
-from .env import REDIS_DB, REDIS_HOST, ORDER_LIMIT
+import redis
+
 from order.exchange import ExchangeHandler
 from order.models import Order, OrderStatus
+from .env import REDIS_DB, REDIS_HOST, ORDER_LIMIT
 
 
 class RedisHandler:

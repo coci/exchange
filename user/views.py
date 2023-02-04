@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .method_permission import method_permission_classes
 from user.serializers import RegisterUserSerializer, UserDetailSerializer, UpdateUserSerializer
+from .method_permission import method_permission_classes
 
 
 class UserApi(APIView):
